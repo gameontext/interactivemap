@@ -1,0 +1,5 @@
+interactivemap:
+ build: ./interactivemap-wlpcfg
+ ports:
+  - "5030:9080"
+
