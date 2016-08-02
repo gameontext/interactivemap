@@ -110,13 +110,16 @@ function register(gid, secret, json, roomid) {
 }
 
 function updateMap() {
+	$('#refreshMapLabel').removeClass('hidden');
   $.ajax({
       url: 'update',
       method: 'GET',
       success: function (data, status) {
+    	  $('#refreshMapLabel').addClass('hidden');
                   alert('Map update successful : response from server : ' + status);
               },
       error: function (xhr, data, txt) {
+    	  $('#refreshMapLabel').addClass('hidden');
                   alert('Unable to update map : response from server : ' + data + ':' + txt);
               }
   });
@@ -137,9 +140,11 @@ function unregister(gid, secret, roomid) {
     success: function (data, status) {
                 alert('Room successfully deleted : response from server : ' + status);
                 updateMap();
+                $("#progressBar").addClass('hidden');
             },
     error: function (xhr, data, txt) {
                 alert('Unable to delete room : response from server : ' + data + ':' + txt);
+                $("#progressBar").addClass('hidden');
             }
   });
 }

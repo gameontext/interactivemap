@@ -67,6 +67,7 @@
                 </ul>
             </li>
             <li class="hidden-xs"><a href="#" data-toggle="collapse" data-target=".navbar-collapse.in" id="list-btn"><i class="fa fa-list white"></i>&nbsp;&nbsp;POI List</a></li>
+            <li id="refreshMapLabel" class="hidden"><p data-toggle="collapse" class="navbar-text"><i class="fa fa-refresh fa-spin fa-2x fa-fw"></i>&nbsp;&nbsp;Refreshing Map</p></li>
           </ul>
         </div><!--/.navbar-collapse -->
       </div>
@@ -381,6 +382,10 @@
     	  </div>
           </div> <!-- end modal-body -->
           <div class="modal-footer">
+            <div id="progressBar" class="progress progress-striped active hidden">
+              <div class="progress-bar" style="width:100%">
+              </div>
+            </div>
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             <button type="button" id="roomInfoUpdate-btn" class="btn" data-dismiss="modal">Update</button>
             <button type="button" id="roomInfoCreate-btn" class="btn" data-dismiss="modal">Create</button>

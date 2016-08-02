@@ -418,6 +418,7 @@ $("#roomInfoUpdate-btn").click(function() {
 $("#roomInfoDelete-btn").click(function() {
 	var info = inputToJSON("roomInfo_", "missing");
 	console.log('Deleting room : ' + info.id);
+	$("#progressBar").removeClass('hidden');
 	unregister(gameonID, gameonSecret, info.id);
 	return true;
 });
