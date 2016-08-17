@@ -422,10 +422,54 @@ $("#roomInfoDelete-btn").click(function() {
 	return true;
 });
 
+//fires when asked to save developer information
+$("#rememberDetails_All").click(function() {
+	console.log("Saving all details");
+	player.setDevConfig(document.getElementById('GameOnID').value, document.getElementById('GameOnSecret').value)
+	return true;
+});
+
+$("#rememberDetails_ID").click(function() {
+	console.log("Saving ID only");
+	player.setDevConfig(document.getElementById('GameOnID').value);
+	return true;
+});
+
+$("#rememberDetails_never").click(function() {
+	console.log("Not saving details");
+	player.setDevConfig();		//passing no config results in it being deleted
+	return true;
+});
+
+
 //configure options that are available for developers if they enter their ID/secret
 function configureDevOptions() {
-	//see if an ID has been specified
+	//see if an ID has been populated, either by the user or the browser auto-fill
 	var id = document.getElementById('GameOnID').value;
+	var secret = document.getElementById('GameOnSecret').value;
+	
+	//now determine the state of the remember you buttons based on what is available in the browser local storage
+	var config = player.getDevConfig();
+	if(config.id) {
+		if(config.secret) {
+			document.getElementById("rememberDetails_All").checked = true;
+			document.getElementById("rememberDetails_ID").checked = false;
+			document.getElementById("rememberDetails_never").checked = false;
+		} else {
+			document.getElementById("rememberDetails_ID").checked = true;
+			document.getElementById("rememberDetails_All").checked = false;
+			document.getElementById("rememberDetails_never").checked = false;
+		}
+	} else {
+		document.getElementById("rememberDetails_never").checked = true;
+		document.getElementById("rememberDetails_All").checked = false;
+		document.getElementById("rememberDetails_ID").checked = false;
+	}
+	
+	//existing data in the form always wins over data from storage in case the save event hasn't happened yet
+	if(!id) id = config.id;
+	if(!secret) secret = config.secret;
+	
 	if(id) {
 		//validate that the ID looks correct
 		var pos = id.indexOf(":");
@@ -435,19 +479,23 @@ function configureDevOptions() {
 		}
 		//have entered an ID so can do some other things
 		gameonID = id;		//set the GameOn ID, needs to happen before adding the layer
+		document.getElementById('GameOnID').value = id;
 		map.addLayer(myroomLayer);
 	} else {
 		//remove any developer specific things we've added
 		map.removeLayer(myroomLayer);
+		document.getElementById('GameOnID').value = "";
 	}
 	
 	//now look for the secret
-	var secret = document.getElementById('GameOnSecret').value;
+	
 	if(secret) {
 		gameonSecret = secret;
+		document.getElementById('GameOnSecret').value = secret;
 	} else {
 		gameonSecret = null;
-	}	
+		document.getElementById('GameOnSecret').value = "";
+	}
 }
 
 //run when the dom is constructed 
