@@ -41,7 +41,7 @@ public class Feature {
 		StringBuilder builder = new StringBuilder("{ \"type\": \"Feature\",\n\"properties\": {");
 		if(!properties.isEmpty()) {
 			for(Entry<String, String> property : properties.entrySet()) {
-				builder.append("\n\"" + property.getKey() + "\":\"" + property.getValue() + "\",");
+				builder.append("\n\"" + GeoJSONMapData.escapeJSON(property.getKey()) + "\":\"" + GeoJSONMapData.escapeJSON(property.getValue()) + "\",");
 			}
 			builder.delete(builder.lastIndexOf(","), builder.length());
 		}
