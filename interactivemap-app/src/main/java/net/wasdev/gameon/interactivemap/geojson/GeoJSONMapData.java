@@ -101,4 +101,39 @@ public class GeoJSONMapData {
         return features;
     }
     
+    /**
+     * Escape data that is intended to be inserted into JSON
+     * @param data the data to be escaped
+     * @return escaped data suitable for JSON
+     */
+    public static String escapeJSON(String data) {
+        StringBuilder result = new StringBuilder();
+        for(int i = 0; i < data.length(); i++) {
+            char c = data.charAt(i);
+            switch(c) {
+                case '\b':
+                    result.append("\\b");
+                    break;
+                case '\f':
+                    result.append("\\f");
+                    break;
+                case '\n':
+                    result.append("\\n");
+                    break;
+                case '\t':
+                    result.append("\\t");
+                    break;
+                case '"':
+                    result.append("\\\"");
+                    break;
+                case '\\':
+                    result.append("\\\\");
+                    break;
+                default :
+                    result.append(c);
+                    break;
+            }
+        }
+        return result.toString();
+    }
 }
