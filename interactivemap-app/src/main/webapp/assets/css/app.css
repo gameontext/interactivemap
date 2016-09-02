@@ -92,6 +92,10 @@ input[type="radio"], input[type="checkbox"] {
 .navbar-collapse.in {
   overflow-y: hidden;
 }
+.navbar-nav .microprofile a{
+  padding-top:5px;
+  padding-bottom:5px;
+}
 .navbar-header .navbar-icon-container {
   margin-right: 15px;
 }
