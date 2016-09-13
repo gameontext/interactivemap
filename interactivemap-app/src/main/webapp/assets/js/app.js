@@ -310,6 +310,13 @@ var myrooms = L.geoJson(null, {
       layer.on({
         click: function (e) {
           var props = layer.feature.properties;
+          //if the user has supplied a GameOn! ID and secret then we can also get the connection details
+          if(gameonID && gameonSecret) {
+        	  console.log("GameOn! ID and secret found, retrieving connection details");
+        	  getConnectionDetails(gameonID, gameonSecret, props);
+          } else {
+        	  console.log("Unable to get connection details due to missing ID and/or secret");
+          }
           for (prop in props) {
         	  $("#roomInfo_" + prop).val(props[prop]);
           }
