@@ -109,6 +109,32 @@ function register(gid, secret, json, roomid) {
   }); 
 }
 
+function getConnectionDetails(gid, secret, roomInfo) {
+	  var date = now();
+	  var body = "";
+	  var bodyHash = hash(body);
+	  var sig = hmac(gid, secret, date, bodyHash);
+	  var endpoint = mapurl + '/' + roomInfo.id;
+	  
+	  $.ajax({
+	      url: endpoint,
+	      method: 'GET',
+	      headers: {  'gameon-id': gid,
+	                  'gameon-date': date,
+	                  'gameon-sig-body': bodyHash,
+	                  'gameon-signature': sig},
+	      contentType: 'application/json', //what is being sent to the server
+	      dataType: 'json',  //what comes back from the server
+	      data: body,
+	      success: function (data, status) {
+	                  $("#roomInfo_target").val(data.info.connectionDetails.target);
+	              },
+	      error: function (xhr, data, txt) {
+	                  alert('Unable to get connection details for room : response from server : ' + data + ':' + txt);
+	              }
+	  });	
+}
+
 function updateMap() {
   $.ajax({
       url: 'update',
