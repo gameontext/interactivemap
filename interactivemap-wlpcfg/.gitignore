@@ -9,3 +9,4 @@
 /servers/.classCache
 /target
 servers/gameon-room/resources
+server.env
