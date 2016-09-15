@@ -31,7 +31,8 @@ public class Rect implements SVGElement {
 	public int ry = 0;
 	public int width = 0;
 	public int height = 0;
-	public String style = STYLE_ROOM_HEALTHY;		//default
+	public boolean empty = false;
+	public int styleTyle = 1;
 	
 	public String toString() {
 		StringBuilder builder = new StringBuilder();
@@ -41,7 +42,11 @@ public class Rect implements SVGElement {
 		builder.append("ry=\"" + ry + "\" ");
 		builder.append("width=\"" + width + "\" ");
 		builder.append("height=\"" + height + "\" ");
-		builder.append("style=\"" + getStyle() + "\"" );
+		if(empty) {
+		    builder.append("style=\"" + STYLE_EMPTY + "\"" );
+		} else {
+		    builder.append("style=\"" + getStyle() + "\"" );
+		}
 		builder.append(" />\n");
 		return builder.toString();
 	}
@@ -49,13 +54,31 @@ public class Rect implements SVGElement {
 	private String getStyle() {
 	    StringBuilder style = new StringBuilder();
 	    style.append("fill:");
-	    style.append(getColour());
+	    switch(styleTyle) {
+	        case 2 :
+	            style.append(getSweepColour());
+	            break;
+	        default :
+	            style.append(getDefaultColour());
+	            break;
+	    }
+	    
 	    style.append(";stroke:black;stroke-width:1;opacity:0.5");
 	    return style.toString();
 	}
 	
+	private RGB getDefaultColour() {
+	    if((mapX == 0) && (mapY ==0)) {
+	        //first room
+	        return new RGB(199, 223, 245);
+	    } else {
+	        //healthy room colour - TODO make this work for sick rooms
+	        return new RGB(185, 243, 97);
+	    }
+	}
+	
 	//determine the colour of the rectangle based on it's proximity to the centre, like an archery target.
-	private RGB getColour() {
+	private RGB getSweepColour() {
 	    int distance = Math.max(Math.abs(mapX), Math.abs(mapY)); //how far from the centre is the room
 	    switch(distance) {
 	        case 0 : //this is first room

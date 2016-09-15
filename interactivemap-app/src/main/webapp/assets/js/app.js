@@ -221,7 +221,15 @@ function convertGeoJson(latlng, log) {
 	return bounds;
 }
 
-var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}', {
+var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=1', {
+  continuousWorld: true,
+  maxZoom: 3,
+  minZoom: 1,
+  zoomReverse : true,
+  tileSize: 255
+});
+
+var sweepLayer = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=2', {
   continuousWorld: true,
   maxZoom: 3,
   minZoom: 1,
@@ -298,6 +306,13 @@ var etag = undefined;
 
 function refreshMap() {
   mapquestOSM.redraw();  //request a redraw of the tiles layer
+  $.ajax({
+    dataType: "xml",
+    url: "v1/svg?depth=1&x=0&y=0&style=2",
+    complete: function (xhr, status) {
+      sweepLayer.redraw();
+    }
+  });
   //trigger an update of the geo JSON features
   $.getJSON("v1/geojson/features?depth=0", function (data, status, xhr) {
     map.removeLayer(roomLayer); //remove existing layer from the map
@@ -328,7 +343,7 @@ function refreshMap() {
 var checkForUpdates = function() {
   $.ajax({
     dataType: "xml",
-    url: "v1/svg?depth=1&x=0&y=0",
+    url: "v1/svg?depth=1&x=0&y=0&style=1",
     complete: function (xhr, status) {
       var headers = xhr.getAllResponseHeaders().split('\n');
       for(var i = 0; i < headers.length; i++) {
@@ -351,7 +366,7 @@ var checkForUpdates = function() {
 
 $.ajax({
   dataType: "xml",
-  url: "v1/svg?depth=1&x=0&y=0",
+  url: "v1/svg?depth=1&x=0&y=0&style=1",
   complete: function (xhr, status) {
     var headers = xhr.getAllResponseHeaders().split('\n');
     for(var i = 0; headers.length; i++) {
@@ -605,7 +620,7 @@ $('#roomModal').on('hidden.bs.modal', function () {
 });
 
 var map = L.map('map', {
-	layers: [mapquestOSM, highlight],
+	layers: [mapquestOSM, sweepLayer, highlight],
 	zoomControl: false,
     attributionControl: false,
     crs: L.CRS.Simple,
@@ -733,7 +748,8 @@ if (document.body.clientWidth <= 767) {
 }
 
 var baseLayers = {
-  "GameOn Map": mapquestOSM
+  "Game On! Map": mapquestOSM,
+  "Sweep Map" : sweepLayer
 };
 
 var groupedOverlays = {
