@@ -17,7 +17,8 @@
 //Interactions with the sites API on /map/v?/sites
 
 var mapurl = 'https://game-on.org/map/v1/sites';
-
+//line below is useful for local testing
+//var mapurl = 'https://' + window.location.hostname + '/map/v1/sites';
 
 //pads a numeric value with additional zeros
 function pad(value) {
@@ -39,7 +40,7 @@ function hmac(id, secret, date, bodyHash) {
   var mac = new KJUR.crypto.Mac({"alg": "HmacSHA256", "pass": toUTF8(secret)});
   var headers = "";  //this would be the hash of any game on headers
   var params = "";  //this would be the hash of any query string parameters
-  
+
   //send in old style
   //mac.updateString(toUTF8("POST"));
   //mac.updateString(toUTF8("/map/v1/sites"));
@@ -88,7 +89,7 @@ function register(gid, secret, json, roomid) {
   var sig = hmac(gid, secret, date, bodyHash);
   var verb = roomid ? 'PUT' : 'POST';
   var endpoint = roomid ? mapurl + '/' + roomid : mapurl;
-  
+
   $.ajax({
       url: endpoint,
       method: verb,
@@ -106,7 +107,7 @@ function register(gid, secret, json, roomid) {
       error: function (xhr, data, txt) {
                   alert('Unable to register/update room : response from server : ' + data + ':' + txt);
               }
-  }); 
+  });
 }
 
 function getConnectionDetails(gid, secret, roomInfo) {
@@ -115,7 +116,7 @@ function getConnectionDetails(gid, secret, roomInfo) {
 	  var bodyHash = hash(body);
 	  var sig = hmac(gid, secret, date, bodyHash);
 	  var endpoint = mapurl + '/' + roomInfo.id;
-	  
+
 	  $.ajax({
 	      url: endpoint,
 	      method: 'GET',
@@ -132,7 +133,7 @@ function getConnectionDetails(gid, secret, roomInfo) {
 	      error: function (xhr, data, txt) {
 	                  alert('Unable to get connection details for room : response from server : ' + data + ':' + txt);
 	              }
-	  });	
+	  });
 }
 
 function updateMap() {
@@ -140,7 +141,7 @@ function updateMap() {
       url: 'update',
       method: 'GET',
       success: function (data, status) {
-                  alert('Map update successful : response from server : ' + status);
+                  console.log('Map update successful : response from server : ' + status);
               },
       error: function (xhr, data, txt) {
                   alert('Unable to update map : response from server : ' + data + ':' + txt);

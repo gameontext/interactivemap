@@ -575,7 +575,7 @@ function configureDevOptions() {
 	if(id) {
 		//validate that the ID looks correct
 		var pos = id.indexOf(":");
-		if(pos == -1) {
+		if((pos == -1) && !(id == "dummy.DevUser")) {
 			console.log('Please check that the supplied id is valid');
 			return false;
 		}
@@ -638,7 +638,7 @@ map.on("overlayadd", function(e) {
 		  markerClusters.addLayer(myrooms);
 		  syncSidebar();
 	  } else {
-		  alert("No ID set : ");
+		  alert("You need to set your Game On ID in the developer information tab before you can view your rooms");
 	  }
   }
 });
