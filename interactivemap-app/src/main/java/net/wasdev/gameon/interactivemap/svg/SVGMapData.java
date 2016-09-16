@@ -21,12 +21,16 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.servlet.ServletContext;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
+import javax.ws.rs.core.Request;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
+import javax.ws.rs.core.Response.Status;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiParam;
@@ -49,12 +53,23 @@ public class SVGMapData {
     @GET
     @io.swagger.annotations.ApiOperation(value = "Generate SVG for the specified co-ordinates",
         notes = "")
-    public Response getData(@Context ServletContext ctx,
+    public Response getData(@Context Request req,
             @ApiParam(value = "Depth for the generated map") @QueryParam("depth") String pdepth,
             @ApiParam(value = "x co-ordinate for the map centre") @QueryParam("x") String px,
-            @ApiParam(value = "y co-ordinate for the map centre") @QueryParam("y") String py) {
+            @ApiParam(value = "y co-ordinate for the map centre") @QueryParam("y") String py,
+            @ApiParam(value = "Style for the tiles") @QueryParam("style") int style) {
+        
+        ResponseBuilder builder = null;     //the response builder to use
         
         if(mapctrl != null) {
+            EntityTag tag = new EntityTag(mapctrl.getHash() + "-" + style);
+            if((builder = req.evaluatePreconditions(tag)) != null) {
+                System.out.println("ETag match - return not modified");
+                return builder.build();
+            } else {
+                builder = Response.ok();
+                builder.tag(tag);
+            }
             data = mapctrl.getMapData();
         }
         if(data.isEmpty()) {
@@ -71,13 +86,14 @@ public class SVGMapData {
         y *= ((depth * 2) - 1);
         
         //walk the map and send back 
-        String svg = walkSites(depth, x + data.getDeltaX(), y + data.getDeltaY()).toString();      
-        ResponseBuilder builder = Response.ok().entity(svg.toString());
+        System.out.println("Data has changed since last request");
+        String svg = walkSites(depth, x + data.getDeltaX(), y + data.getDeltaY(), style).toString();
+        builder.status(Status.OK).entity(svg.toString());
         builder.type("image/svg+xml");
         return builder.build();
     }
 
-    private SVG walkSites(int depth, int originX, int originY) {
+    private SVG walkSites(int depth, int originX, int originY, int style) {
         int tileSize = 255;
         int size = (depth * 2) - 1;
         int rsize = tileSize / size;
@@ -99,6 +115,7 @@ public class SVGMapData {
                 r.width = rsize;
                 r.x = (x - startX) * rsize;
                 r.y = (y - startY) * rsize;
+                r.styleTyle = style;
                 List<SVGElement> texts = null;
                 Site site = null;
 
@@ -111,6 +128,8 @@ public class SVGMapData {
                     RoomInfo info = site.getInfo();
                     if(info != null) {
                         String roomId = info.getName();
+                        r.mapX = site.getCoord().getX();
+                        r.mapY = site.getCoord().getY();
                         switch(depth) {
                             case 1 :
                                 String name = info.getFullName();
@@ -128,14 +147,17 @@ public class SVGMapData {
                                 svg.addElements(texts);
                                 break;
                         }
+                        /*
                         if((roomId != null) && roomId.equalsIgnoreCase("First Room")) {
                             r.style = Rect.STYLE_FIRST_ROOM;
                         }
+                        */
                     }
                 }
                 if(texts == null) {
                     texts = getText(depth, "[EMPTY]", r.x + 10, r.y + 20);
-                    r.style = Rect.STYLE_EMPTY;
+                    //r.style = Rect.STYLE_EMPTY;
+                    r.empty = true;
                     svg.addElements(texts);
                 }
                 svg.addElement(r);
