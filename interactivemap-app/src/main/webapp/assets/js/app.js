@@ -1,3 +1,4 @@
+console.log("Map version 1.1.1");
 
 var map, featureList, roomSearch = [];
 
@@ -50,7 +51,7 @@ $("#newroom-btn").click(function() {
 	  $("#roomInfoUpdate-btn").hide();
 	  $("#roomInfoDelete-btn").hide();
 	  $("#roomInfoCreate-btn").show();
-
+	  
 	  $("#roomModal").modal("show");
 	  $('.nav-tabs a[href="#roomInfoTab-Details"]').tab('show');
 	  $(".navbar-collapse.in").collapse("hide");
@@ -71,7 +72,7 @@ $("#wstestConnect-btn").click(function() {
 		alert(msgtype.val());
 	} else {
 		console.log("Error : unable to determine message type to send to room.")
-	}
+	}	
 	return false;
 });
 
@@ -148,7 +149,7 @@ function syncSidebar() {
   $("#feature-list tbody").empty();
   /* Loop through healthy room layer and add only features which are in the map bounds */
   rooms.eachLayer(function (layer) {
-    if (map.hasLayer(roomLayer) &&
+    if (map.hasLayer(roomLayer) && 
     		!(map.hasLayer(myroomLayer) && (layer.feature.properties.owner == gameonID))) {
       var conv = convertGeoJson(layer.getLatLng());
       //labels start at NW of bounds, so include if the label is visible
@@ -157,7 +158,6 @@ function syncSidebar() {
     	  if((layer.getLatLng().lat == 0) && (layer.getLatLng().lng == 0)) {
     		  icon = "img/room-start.png";	//mark first room differently
     	  }
-        console.log("Rooms Adding : " + layer.feature.properties.name);
         $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="' + icon + '"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       }
     }
@@ -170,12 +170,11 @@ function syncSidebar() {
 	  //labels start at NW of bounds, so include if the label is visible
 	  if (map.getBounds().contains(conv.getNorthWest())) {
 	  	var icon = "img/room-healthy.png";
-      console.log("MY rooms Adding : " + layer.feature.properties.name);
 	    $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="' + icon + '"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
 	  }
 	}
   });
-
+  
   /* Update list.js featureList */
   featureList = new List("features", {
     valueNames: ["feature-name"]
@@ -221,15 +220,7 @@ function convertGeoJson(latlng, log) {
 	return bounds;
 }
 
-var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=1', {
-  continuousWorld: true,
-  maxZoom: 3,
-  minZoom: 1,
-  zoomReverse : true,
-  tileSize: 255
-});
-
-var sweepLayer = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=2', {
+var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}', {
   continuousWorld: true,
   maxZoom: 3,
   minZoom: 1,
@@ -256,7 +247,7 @@ var markerClusters = new L.MarkerClusterGroup({
 
 /* Empty layer placeholder to add to layer control for listening when to add/remove rooms to markerClusters layer */
 var roomLayer = L.geoJson(null);
-var roomGeoJSON = {
+var rooms = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
       icon: L.icon({
@@ -282,7 +273,7 @@ var roomGeoJSON = {
           highlight.clearLayers().addLayer(L.circleMarker(cgeo, highlightStyle));
         }
       });
-      //$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/room-healthy.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/room-healthy.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       roomSearch.push({
         name: layer.feature.properties.name,
         fullName: layer.feature.properties.fullName,
@@ -293,99 +284,16 @@ var roomGeoJSON = {
       });
     }
   }
-}
-
-var rooms = L.geoJson(null, roomGeoJSON);
-
-$.getJSON("v1/geojson/features?depth=0", function (data, status, xhr) {
+});
+$.getJSON("v1/geojson/features?depth=0", function (data) {
   rooms.addData(data);
   map.addLayer(roomLayer);
 });
 
-var etag = undefined;
-
-function refreshMap() {
-  mapquestOSM.redraw();  //request a redraw of the tiles layer
-  $.ajax({
-    dataType: "xml",
-    url: "v1/svg?depth=1&x=0&y=0&style=2",
-    complete: function (xhr, status) {
-      sweepLayer.redraw();
-    }
-  });
-  //trigger an update of the geo JSON features
-  $.getJSON("v1/geojson/features?depth=0", function (data, status, xhr) {
-    map.removeLayer(roomLayer); //remove existing layer from the map
-    var showMyRooms = map.hasLayer(myroomLayer);
-    if(showMyRooms) {
-      map.removeLayer(myroomLayer);
-    }
-    //refresh the list of all rooms
-    roomLayer = L.geoJson(null);
-    rooms = L.geoJson(null, roomGeoJSON);
-    rooms.addData(data);
-    map.addLayer(roomLayer);
-    markerClusters.addLayer(rooms);
-
-    //update my rooms
-    myrooms = L.geoJson(null, myroomsGeoJSON);
-    myroomLayer = L.geoJson(null);
-    myrooms.addData(data);
-    if(showMyRooms) {
-      map.addLayer(myroomLayer);
-      markerClusters.addLayer(myrooms);
-    }
-    syncSidebar();
-  });
-}
-
-//if the map data has changed, this endpoint will give back a new etag
-var checkForUpdates = function() {
-  $.ajax({
-    dataType: "xml",
-    url: "v1/svg?depth=1&x=0&y=0&style=1",
-    complete: function (xhr, status) {
-      var headers = xhr.getAllResponseHeaders().split('\n');
-      for(var i = 0; i < headers.length; i++) {
-        if(headers[i] && headers[i].indexOf(':') != -1) {
-          var values = headers[i].split(':');
-          if(values[0] == 'ETag') {
-            var newtag = values[1].trim();
-            if(newtag != etag) {
-              etag = newtag;
-              console.log("ALERT - etag changed");
-              refreshMap();
-            }
-            return;   //stop processing after checking etag
-          }
-        }
-      }
-    }
-  });
-}
-
-$.ajax({
-  dataType: "xml",
-  url: "v1/svg?depth=1&x=0&y=0&style=1",
-  complete: function (xhr, status) {
-    var headers = xhr.getAllResponseHeaders().split('\n');
-    for(var i = 0; headers.length; i++) {
-      if(headers[i] && headers[i].indexOf(':') != -1) {
-        var values = headers[i].split(':');
-        if(values[0] == 'ETag') {
-          console.log("Initial ETag = " + values[1]);
-          etag = values[1].trim();
-          setInterval(checkForUpdates, 3000);
-          return;   //finish processing
-        }
-      }
-    }
-  }
-});
 
 //feature control for my rooms
 var myroomLayer = L.geoJson(null);
-var myroomsGeoJSON = {
+var myrooms = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
       icon: L.icon({
@@ -403,13 +311,6 @@ var myroomsGeoJSON = {
       layer.on({
         click: function (e) {
           var props = layer.feature.properties;
-          //if the user has supplied a GameOn! ID and secret then we can also get the connection details
-          if(gameonID && gameonSecret) {
-        	  console.log("GameOn! ID and secret found, retrieving connection details");
-        	  getConnectionDetails(gameonID, gameonSecret, props);
-          } else {
-        	  console.log("Unable to get connection details due to missing ID and/or secret");
-          }
           for (prop in props) {
         	  $("#roomInfo_" + prop).val(props[prop]);
           }
@@ -424,7 +325,7 @@ var myroomsGeoJSON = {
           highlight.clearLayers().addLayer(L.circleMarker(cgeo, highlightStyle));
         }
       });
-      //$("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/room-healthy.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
+      $("#feature-list tbody").append('<tr class="feature-row" id="' + L.stamp(layer) + '" lat="' + layer.getLatLng().lat + '" lng="' + layer.getLatLng().lng + '"><td style="vertical-align: middle;"><img width="16" height="18" src="img/room-healthy.png"></td><td class="feature-name">' + layer.feature.properties.name + '</td><td style="vertical-align: middle;"><i class="fa fa-chevron-right pull-right"></i></td></tr>');
       roomSearch.push({
         name: layer.feature.properties.name,
         fullName: layer.feature.properties.fullName,
@@ -435,9 +336,7 @@ var myroomsGeoJSON = {
       });
     }
   }
-}
-
-var myrooms = L.geoJson(null, myroomsGeoJSON);
+});
 
 $.getJSON("v1/geojson/features?depth=0", function (data) {
   myrooms.addData(data);
@@ -450,8 +349,8 @@ function inputToJSON(startswith, defvalue) {
 		defvalue = '';
 	}
 	$('input[id^="' + startswith + '"]').each(function(){
-		var name = this.id.substring(9);
-		json[name] = this.value || defvalue;
+		var name = this.id.substring(9); 
+		json[name] = this.value || defvalue; 
 	});
 	return json;
 }
@@ -494,7 +393,7 @@ function adaptToRoom(data) {
  			"target" : data.target
  		}
 	};
-	return room;
+	return room;	
 }
 
 //create a new room
@@ -549,7 +448,7 @@ function configureDevOptions() {
 	//see if an ID has been populated, either by the user or the browser auto-fill
 	var id = document.getElementById('GameOnID').value;
 	var secret = document.getElementById('GameOnSecret').value;
-
+	
 	//now determine the state of the remember you buttons based on what is available in the browser local storage
 	var config = player.getDevConfig();
 	if(config.id) {
@@ -567,15 +466,15 @@ function configureDevOptions() {
 		document.getElementById("rememberDetails_All").checked = false;
 		document.getElementById("rememberDetails_ID").checked = false;
 	}
-
+	
 	//existing data in the form always wins over data from storage in case the save event hasn't happened yet
 	if(!id) id = config.id;
 	if(!secret) secret = config.secret;
-
+	
 	if(id) {
 		//validate that the ID looks correct
 		var pos = id.indexOf(":");
-		if((pos == -1) && !(id == "dummy.DevUser")) {
+		if(pos == -1) {
 			console.log('Please check that the supplied id is valid');
 			return false;
 		}
@@ -588,9 +487,9 @@ function configureDevOptions() {
 		map.removeLayer(myroomLayer);
 		document.getElementById('GameOnID').value = "";
 	}
-
+	
 	//now look for the secret
-
+	
 	if(secret) {
 		gameonSecret = secret;
 		document.getElementById('GameOnSecret').value = secret;
@@ -600,7 +499,7 @@ function configureDevOptions() {
 	}
 }
 
-//run when the dom is constructed
+//run when the dom is constructed 
 $(document).ready(function(){
     configureDevOptions();
 });
@@ -615,12 +514,12 @@ $('#roomModal').on('hidden.bs.modal', function () {
 	console.log("Clearing form data");
   //inputs are not wrapped by a form as that won't display properly in a modal with tabs, so select like this
   $('input[id^="roomInfo_"]').each(function(){
-	this.value = '';
+	this.value = ''; 
   });
 });
 
 var map = L.map('map', {
-	layers: [mapquestOSM, sweepLayer, highlight],
+	layers: [mapquestOSM, highlight],
 	zoomControl: false,
     attributionControl: false,
     crs: L.CRS.Simple,
@@ -638,7 +537,7 @@ map.on("overlayadd", function(e) {
 		  markerClusters.addLayer(myrooms);
 		  syncSidebar();
 	  } else {
-		  alert("You need to set your Game On ID in the developer information tab before you can view your rooms");
+		  alert("No ID set : ");
 	  }
   }
 });
@@ -748,8 +647,7 @@ if (document.body.clientWidth <= 767) {
 }
 
 var baseLayers = {
-  "Game On! Map": mapquestOSM,
-  "Sweep Map" : sweepLayer
+  "GameOn Map": mapquestOSM
 };
 
 var groupedOverlays = {
@@ -783,10 +681,10 @@ $("#featureModal").on("hidden.bs.modal", function (e) {
 $(document).one("ajaxStop", function () {
   $("#loading").hide();
   sizeLayerControl();
-
+  
   //make it so that the map display is centred on the screen
   map.setView([-32,32], 2);	//remember that we have zoom inverted when calling back to tile service
-
+  
   featureList = new List("features", {valueNames: ["feature-name"]});
   featureList.sort("feature-name", {order:"asc"});
 
@@ -849,3 +747,4 @@ if (!L.Browser.touch) {
 } else {
   L.DomEvent.disableClickPropagation(container);
 }
+
