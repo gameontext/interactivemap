@@ -1,4 +1,4 @@
-console.log("Map version 1.1.1");
+console.log("Map version 1.1.4");
 
 var map, featureList, roomSearch = [];
 
@@ -220,12 +220,20 @@ function convertGeoJson(latlng, log) {
 	return bounds;
 }
 
-var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}', {
+var mapquestOSM = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=1', {
   continuousWorld: true,
   maxZoom: 3,
   minZoom: 1,
   zoomReverse : true,
   tileSize: 255
+});
+
+var sweepLayer = L.tileLayer('v1/svg?depth={z}&x={x}&y={y}&style=2', {
+	continuousWorld: true,
+	maxZoom: 3,
+	minZoom: 1,
+	zoomReverse : true,
+	tileSize: 255
 });
 
 /* Overlay Layers */
@@ -341,6 +349,44 @@ var myrooms = L.geoJson(null, {
 $.getJSON("v1/geojson/features?depth=0", function (data) {
   myrooms.addData(data);
 });
+
+var etag = undefined;
+
+function refreshMap() {
+  mapquestOSM.redraw();  //request a redraw of the tiles layer
+  $.ajax({
+    dataType: "xml",
+    url: "v1/svg?depth=1&x=0&y=0&style=2",
+    complete: function (xhr, status) {
+      sweepLayer.redraw();
+    }
+  });
+  //trigger an update of the geo JSON features
+  $.getJSON("v1/geojson/features?depth=0", function (data, status, xhr) {
+    map.removeLayer(roomLayer); //remove existing layer from the map
+    var showMyRooms = map.hasLayer(myroomLayer);
+    if(showMyRooms) {
+      map.removeLayer(myroomLayer);
+    }
+    //refresh the list of all rooms
+    roomLayer = L.geoJson(null);
+    rooms = L.geoJson(null, roomGeoJSON);
+    rooms.addData(data);
+    map.addLayer(roomLayer);
+    markerClusters.addLayer(rooms);
+
+    //update my rooms
+    myrooms = L.geoJson(null, myroomsGeoJSON);
+    myroomLayer = L.geoJson(null);
+    myrooms.addData(data);
+    if(showMyRooms) {
+      map.addLayer(myroomLayer);
+      markerClusters.addLayer(myrooms);
+    }
+    syncSidebar();
+  });
+}
+
 
 //convert all the values for inputs that startswith into a JSON object, with an optional default value if missing
 function inputToJSON(startswith, defvalue) {
@@ -519,7 +565,7 @@ $('#roomModal').on('hidden.bs.modal', function () {
 });
 
 var map = L.map('map', {
-	layers: [mapquestOSM, highlight],
+	layers: [mapquestOSM, sweepLayer, highlight],
 	zoomControl: false,
     attributionControl: false,
     crs: L.CRS.Simple,
@@ -647,7 +693,8 @@ if (document.body.clientWidth <= 767) {
 }
 
 var baseLayers = {
-  "GameOn Map": mapquestOSM
+  "Game On! Map": mapquestOSM,
+  "Sweep Map" : sweepLayer
 };
 
 var groupedOverlays = {
