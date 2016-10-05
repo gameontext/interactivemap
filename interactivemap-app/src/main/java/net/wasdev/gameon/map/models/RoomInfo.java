@@ -15,6 +15,7 @@
  *******************************************************************************/
 package net.wasdev.gameon.map.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(
         description = "Mutable information: descriptive elements, service URL, etc.")
 @JsonInclude(Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class RoomInfo {
     
     /** name of room (short / url-friendly) */

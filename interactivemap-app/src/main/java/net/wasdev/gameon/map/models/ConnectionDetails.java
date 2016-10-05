@@ -15,6 +15,7 @@
  *******************************************************************************/
 package net.wasdev.gameon.map.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -23,6 +24,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Connection details used by the mediator to connect to the room on the player's behalf")
 @JsonInclude(Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class ConnectionDetails {
 
     private String type;

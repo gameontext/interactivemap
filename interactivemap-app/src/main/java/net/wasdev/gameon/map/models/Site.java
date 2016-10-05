@@ -16,6 +16,7 @@
 package net.wasdev.gameon.map.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -34,6 +35,7 @@ import io.swagger.annotations.ApiModelProperty;
         description = "A room (or suite) is anchored into the map as a site when it is registered. "
                 + "The mapping should remain fairly stable unless a room is removed and re-appears.")
 @JsonInclude(Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Site {
 
     /** Site id */
@@ -67,6 +69,12 @@ public class Site {
             required = true)
     private String owner;
 
+    /** Owner of the room */
+    @ApiModelProperty(
+            value = "createdOn",
+            required = false)
+    private String createdOn;
+    
     private Coordinates coord;
 
     @ApiModelProperty(hidden = true)
@@ -127,12 +135,22 @@ public class Site {
     public void setType(String type) {
         this.type = type;
     }
+    
+    public String getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(String createdOn) {
+        this.createdOn = createdOn;
+    }
+
     @Override
     public String toString()  {
       StringBuilder sb = new StringBuilder();
       sb.append("class Site {\n");
       sb.append("  _id: ").append(id).append("\n");
       sb.append("  _rev: ").append(rev).append("\n");
+      sb.append("  createdOn: ").append(createdOn).append("\n");
       sb.append("  type: ").append(type).append("\n");
       sb.append("  coord: ").append(coord).append("\n");
       sb.append("  info: ").append(info).append("\n");

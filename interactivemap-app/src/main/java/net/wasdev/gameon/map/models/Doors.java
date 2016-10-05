@@ -15,6 +15,7 @@
  *******************************************************************************/
 package net.wasdev.gameon.map.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -36,6 +37,7 @@ import io.swagger.annotations.ApiModelProperty;
                 + "mentioned should be West. Descriptions are optional, and will be generated "
                 + "if absent.")
 @JsonInclude(Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Doors {
 
     private String n = null;

@@ -173,7 +173,6 @@ public class MapController {
             if(!digest.isEmpty()) {
                 hash = digest;
             }
-            
             return mapper.readValue(sites, Site[].class);
         }
         
