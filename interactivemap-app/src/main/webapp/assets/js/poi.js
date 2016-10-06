@@ -92,37 +92,43 @@ function syncSidebar() {
   /* Empty sidebar features */
   $("#feature-list tbody").empty();
   var pois = {}; // this is the map of items to show in the POI
-  /* Loop through healthy room layer and add only features which are in the map bounds */
-  rooms.eachLayer(function (layer) {
-    if(map.hasLayer(roomLayer) && layer.feature.properties.owner) {
-      var id = layer.feature.properties.owner + layer.feature.properties.name;
-      if(!pois[id]) {
-        pois[id] = {
-          icon : "img/room-healthy.png",
-          id : L.stamp(layer),
-          latlng : layer.getLatLng(),
-          name : layer.feature.properties.name
-        }
-      }
-    }
 
-
-  });
-
+  //my rooms have priority as they display full room information rather than a summary
   myrooms.eachLayer(function (layer) {
-    //only show my rooms if the main room show isn't visible, otherwise we're going to get duplicates
-    if (map.hasLayer(myroomLayer) && (layer.feature.properties.owner == gameonID)) {
-      var id = layer.feature.properties.owner + layer.feature.properties.name;
+    var room = layer.feature.properties;
+    if (map.hasLayer(myroomLayer) && (room.owner == gameonID)) {
+      var id = room.owner + room.name;
       if(!pois[id]) {
         pois[id] = {
           icon : "img/room-healthy.png",
           id : L.stamp(layer),
           latlng : layer.getLatLng(),
-          name : layer.feature.properties.name
+          name : room.name
         }
       }
 	   }
   });
+
+  //add remaining rooms
+  rooms.eachLayer(function (layer) {
+    var room = layer.feature.properties;
+    var include = map.hasLayer(roomLayer) && room.owner && (room.name != "AnotherSimpleRoom");
+    include |= map.hasLayer(simpleLayer) && room.owner && (room.name == "AnotherSimpleRoom");
+    if(include) {
+      var id = room.owner + room.name;
+      if(!pois[id]) {
+        pois[id] = {
+          icon : "img/room-healthy.png",
+          id : L.stamp(layer),
+          latlng : layer.getLatLng(),
+          name : room.name
+        }
+      }
+    }
+
+  });
+
+
 
   for(poi in pois) {
     $("#feature-list tbody").append('<tr class="feature-row" id="' + pois[poi].id +

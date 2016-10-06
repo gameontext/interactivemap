@@ -43,6 +43,10 @@ map.on("overlayadd", function(e) {
     markerClusters.addLayer(rooms);
     syncSidebar();
   }
+  if (e.layer === simpleLayer) {
+    markerClusters.addLayer(simpleLayer);
+    syncSidebar();
+  }
   if (e.layer === myroomLayer) {
 	  if(gameonID) {
 		  markerClusters.addLayer(myrooms);
@@ -56,12 +60,14 @@ map.on("overlayadd", function(e) {
 map.on("overlayremove", function(e) {
   if (e.layer === roomLayer) {
     markerClusters.removeLayer(rooms);
-    syncSidebar();
+  }
+  if (e.layer === simpleLayer) {
+    markerClusters.removeLayer(simpleLayer);
   }
   if (e.layer === myroomLayer) {
-	markerClusters.removeLayer(myrooms);
-	syncSidebar();
+	   markerClusters.removeLayer(myrooms);
   }
+  syncSidebar();
 });
 
 /* Filter sidebar feature list to only show features in current map bounds */

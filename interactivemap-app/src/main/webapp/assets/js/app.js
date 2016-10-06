@@ -59,9 +59,11 @@ var highlightStyle = {
   radius: 10
 };
 
-
 /* Empty layer placeholder to add to layer control for listening when to add/remove rooms to markerClusters layer */
 var roomLayer = L.geoJson(null);
+var simpleLayer = L.geoJson(null);
+var myroomLayer = L.geoJson(null);
+
 var rooms = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
@@ -96,11 +98,11 @@ var rooms = L.geoJson(null, {
 $.getJSON("v1/geojson/features?depth=0", function (data) {
   rooms.addData(data);
   map.addLayer(roomLayer);
+  myrooms.addData(data);
 });
 
 
 //feature control for my rooms
-var myroomLayer = L.geoJson(null);
 var myrooms = L.geoJson(null, {
   pointToLayer: function (feature, latlng) {
     return L.marker(latlng, {
@@ -139,9 +141,6 @@ var myrooms = L.geoJson(null, {
   }
 });
 
-$.getJSON("v1/geojson/features?depth=0", function (data) {
-  myrooms.addData(data);
-});
 
 //run when the dom is constructed
 $(document).ready(function(){
@@ -226,8 +225,9 @@ var baseLayers = {
 
 var groupedOverlays = {
   "Points of Interest": {
-    "<img src='img/room-healthy.png' width='24' height='28'>&nbsp;Healthy Rooms": roomLayer,
-    "<img src='img/room-healthy.png' width='24' height='28'>&nbsp;My Rooms": myroomLayer
+    "<img src='img/room-healthy.png' width='24' height='28'>&nbsp;Rooms": roomLayer,
+    "<img src='img/room-healthy.png' width='24' height='28'>&nbsp;My Rooms": myroomLayer,
+    "<img src='img/room-healthy.png' width='24' height='28'>&nbsp;Simple Rooms": simpleLayer
   }
 };
 
