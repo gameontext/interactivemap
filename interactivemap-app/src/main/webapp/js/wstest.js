@@ -17,3 +17,19 @@
 //script that drives the web socket test connection page
 
 
+//websocket test form
+$("#wstest-btn").click(function() {
+  $("#wstestModal").modal("show");
+  $(".navbar-collapse.in").collapse("hide");
+  return false;
+});
+
+$("#wstestConnect-btn").click(function() {
+	var msgtype = $("input[type='radio'][name='roomMsg_type']:checked");
+	if(msgtype.length > 0) {
+		alert(msgtype.val());
+	} else {
+		console.log("Error : unable to determine message type to send to room.")
+	}
+	return false;
+});

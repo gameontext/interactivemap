@@ -15,6 +15,7 @@
  *******************************************************************************/
 package net.wasdev.gameon.map.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -26,6 +27,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
                 + "Each exit provides the door and URL required for the player to traverse the path "
                 + "to the target room.")
 @JsonInclude(Include.NON_EMPTY)
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Exits {
 
     private Exit n = null;
