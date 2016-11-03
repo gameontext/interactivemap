@@ -86,7 +86,6 @@ public class SVGMapData {
         y *= ((depth * 2) - 1);
         
         //walk the map and send back 
-        System.out.println("Data has changed since last request");
         String svg = walkSites(depth, x + data.getDeltaX(), y + data.getDeltaY(), style).toString();
         builder.status(Status.OK).entity(svg.toString());
         builder.type("image/svg+xml");
