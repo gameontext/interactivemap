@@ -134,7 +134,6 @@ public class MapController {
                         System.out.println("Could not get map data from " + url);
                         return;
                     }
-                    System.out.println("Converting data");
                     Site[] sites = convert(stream);
                     mapData = parseMapData(sites); 
                     flag.drainPermits();    //get rid of any additional permits acquire during fetch

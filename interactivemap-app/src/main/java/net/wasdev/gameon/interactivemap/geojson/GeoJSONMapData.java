@@ -82,12 +82,14 @@ public class GeoJSONMapData {
                         feature.addProperty("fullName", info.getFullName());
                         feature.addProperty("description", info.getDescription());
                         feature.addProperty("owner", site.getOwner());
-                        feature.addProperty("d", info.getDoors().getD());
-                        feature.addProperty("u", info.getDoors().getU());
-                        feature.addProperty("n", info.getDoors().getN());
-                        feature.addProperty("e", info.getDoors().getE());
-                        feature.addProperty("s", info.getDoors().getS());
-                        feature.addProperty("w", info.getDoors().getW());
+                        if(info.getDoors() != null) {
+                            feature.addProperty("d", info.getDoors().getD());
+                            feature.addProperty("u", info.getDoors().getU());
+                            feature.addProperty("n", info.getDoors().getN());
+                            feature.addProperty("e", info.getDoors().getE());
+                            feature.addProperty("s", info.getDoors().getS());
+                            feature.addProperty("w", info.getDoors().getW());
+                        }
                         Coordinates coord = site.getCoord();
                         Point p = new Point();
                         p.x = coord.getX();
