@@ -16,7 +16,7 @@
 
 //Interactions with the sites API on /map/v?/sites
 
-var mapurl = 'https://game-on.org/map/v1/sites';
+var mapurl = 'https://gameontext.org/map/v1/sites';
 //line below is useful for local testing
 //var mapurl = 'https://' + window.location.hostname + '/map/v1/sites';
 
