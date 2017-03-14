@@ -42,7 +42,7 @@ import net.wasdev.gameon.map.models.Site;
 @ApplicationScoped
 public class MapController {
     private static final String ENV_URL = "mapurl";                 //env var to look for map URL in
-    private static final String DEFAULT_URL = "https://game-on.org/map/v1/sites";   //default URL for talking to the map service
+    private static final String DEFAULT_URL = "https://gameontext.org/map/v1/sites";   //default URL for talking to the map service
     private static final String TEST_URL = "test";
     
     private final ScheduledExecutorService execsvc = Executors.newScheduledThreadPool(2);
