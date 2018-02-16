@@ -15,9 +15,9 @@ import javax.servlet.http.HttpServletResponse;
  */
 @WebServlet("/update")
 public class MapServlet extends HttpServlet {
-	private static final long serialVersionUID = -3613121369882052754L;
-	
-	@Inject
+    private static final long serialVersionUID = -3613121369882052754L;
+
+    @Inject
     private MapController mapctrl = null;
 
     @Override
@@ -30,5 +30,5 @@ public class MapServlet extends HttpServlet {
         resp.setStatus(HttpServletResponse.SC_OK);
     }
 
-	
+
 }

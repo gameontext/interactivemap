@@ -20,15 +20,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 public class Feature {
-	private final Map<String, String> properties = new HashMap<>();
-	private Geometry geometry = null;
+    private final Map<String, String> properties = new HashMap<>();
+    private Geometry geometry = null;
 
-	public void addProperty(String name, String value) {
-	    value = (value == null) ? "missing" : value;
-		properties.put(name, value);
-	}
+    public void addProperty(String name, String value) {
+        value = (value == null) ? "missing" : value;
+        properties.put(name, value);
+    }
 
-	public Geometry getGeometry() {
+    public Geometry getGeometry() {
         return geometry;
     }
 
@@ -37,20 +37,20 @@ public class Feature {
     }
 
     @Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder("{ \"type\": \"Feature\",\n\"properties\": {");
-		if(!properties.isEmpty()) {
-			for(Entry<String, String> property : properties.entrySet()) {
-				builder.append("\n\"" + GeoJSONMapData.escapeJSON(property.getKey()) + "\":\"" + GeoJSONMapData.escapeJSON(property.getValue()) + "\",");
-			}
-			builder.delete(builder.lastIndexOf(","), builder.length());
-		}
-		builder.append("\n}\n");		//end of properties
-		if(geometry != null) {
-		    builder.append(", " + geometry.toString());
-		}
-		builder.append("}\n");		//end of feature
-		return builder.toString();
-	}
-	
+    public String toString() {
+        StringBuilder builder = new StringBuilder("{ \"type\": \"Feature\",\n\"properties\": {");
+        if(!properties.isEmpty()) {
+            for(Entry<String, String> property : properties.entrySet()) {
+                builder.append("\n\"" + GeoJSONMapData.escapeJSON(property.getKey()) + "\":\"" + GeoJSONMapData.escapeJSON(property.getValue()) + "\",");
+            }
+            builder.delete(builder.lastIndexOf(","), builder.length());
+        }
+        builder.append("\n}\n");        //end of properties
+        if(geometry != null) {
+            builder.append(", " + geometry.toString());
+        }
+        builder.append("}\n");        //end of feature
+        return builder.toString();
+    }
+
 }

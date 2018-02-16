@@ -25,20 +25,20 @@ public class FeatureCollection {
     public void add(Feature feature) {
         features.add(feature);
     }
-    
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder("{\n\"type\": \"FeatureCollection\",\n\"features\": [");
-		if(!features.isEmpty()) {
-		    for(Feature feature : features ) {
-		        builder.append("\n" + feature + ",");
-		    }
-		    builder.delete(builder.lastIndexOf(","), builder.length());
-		}
-		builder.append("]\n}\n");
-		return builder.toString();
-	}
 
-	
-	
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder("{\n\"type\": \"FeatureCollection\",\n\"features\": [");
+        if(!features.isEmpty()) {
+            for(Feature feature : features ) {
+                builder.append("\n" + feature + ",");
+            }
+            builder.delete(builder.lastIndexOf(","), builder.length());
+        }
+        builder.append("]\n}\n");
+        return builder.toString();
+    }
+
+
+
 }

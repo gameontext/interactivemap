@@ -19,26 +19,26 @@ package net.wasdev.gameon.interactivemap.geojson;
  * GeoJSON rect representation
  */
 public class Rect implements Geometry {
-	public int x = 0;
-	public int y = 0;
-	public int width = 0;
-	public int height = 0;
-	
-	//return the centre of this rectangle
-	public Point getCentre() {
-	    Point p = new Point();
-	    p.x = x + (width / 2);
-	    p.y = y + (height / 2);
-	    return p;
-	}
-	
-	public String toString() {
-		StringBuilder builder = new StringBuilder("\"geometry\": {\n\"type\":\"Polygon\",\n\"coordinates\": [\n");
-		builder.append("[" + x + "," + y + "],");
-		builder.append("[" + (x + width) + "," + y + "],");
-		builder.append("[" + (x + width) + "," + (y + height) + "],");
-		builder.append("[" + x + "," + (y + height) + "]");
-		builder.append("]\n}\n");
-		return builder.toString();
-	}
+    public int x = 0;
+    public int y = 0;
+    public int width = 0;
+    public int height = 0;
+
+    //return the centre of this rectangle
+    public Point getCentre() {
+        Point p = new Point();
+        p.x = x + (width / 2);
+        p.y = y + (height / 2);
+        return p;
+    }
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder("\"geometry\": {\n\"type\":\"Polygon\",\n\"coordinates\": [\n");
+        builder.append("[" + x + "," + y + "],");
+        builder.append("[" + (x + width) + "," + y + "],");
+        builder.append("[" + (x + width) + "," + (y + height) + "],");
+        builder.append("[" + x + "," + (y + height) + "]");
+        builder.append("]\n}\n");
+        return builder.toString();
+    }
 }

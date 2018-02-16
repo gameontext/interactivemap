@@ -21,48 +21,48 @@ import net.wasdev.gameon.map.models.Site;
 
 //Data received from GameOn map service
 public class MapData {
-	private final int deltaX;
-	private final int deltaY;
-	private final JsonObject[][] data;
-	private final Site[][] sites;
-	
-	public static MapData EMPTY_DATA() {
-	    return new MapData(0, 0, (JsonObject[][])null);
-	}
-	
-	public MapData(int deltaX, int deltaY, JsonObject[][] data) {
-		super();
-		this.deltaX = deltaX;
-		this.deltaY = deltaY;
-		this.data = data;
-		sites = null;
-	}
+    private final int deltaX;
+    private final int deltaY;
+    private final JsonObject[][] data;
+    private final Site[][] sites;
 
-	public MapData(int deltaX, int deltaY, Site[][] sites) {
+    public static MapData EMPTY_DATA() {
+        return new MapData(0, 0, (JsonObject[][])null);
+    }
+
+    public MapData(int deltaX, int deltaY, JsonObject[][] data) {
+        super();
+        this.deltaX = deltaX;
+        this.deltaY = deltaY;
+        this.data = data;
+        sites = null;
+    }
+
+    public MapData(int deltaX, int deltaY, Site[][] sites) {
         super();
         this.deltaX = deltaX;
         this.deltaY = deltaY;
         this.sites = sites;
         data = null;
     }
-	
-	public int getDeltaX() {
-		return deltaX;
-	}
 
-	public int getDeltaY() {
-		return deltaY;
-	}
+    public int getDeltaX() {
+        return deltaX;
+    }
 
-	public JsonObject[][] getData() {
-		return data;
-	}
-	
-	public Site[][] getSites() {
-	    return sites;
-	}
+    public int getDeltaY() {
+        return deltaY;
+    }
 
-	public boolean isEmpty() {
-	    return (sites == null) && (data == null);
-	}
+    public JsonObject[][] getData() {
+        return data;
+    }
+
+    public Site[][] getSites() {
+        return sites;
+    }
+
+    public boolean isEmpty() {
+        return (sites == null) && (data == null);
+    }
 }

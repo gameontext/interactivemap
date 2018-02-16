@@ -19,13 +19,13 @@ package net.wasdev.gameon.interactivemap.geojson;
  * GeoJSON rect representation
  */
 public class Point implements Geometry {
-	public int x = 0;
-	public int y = 0;
-	
-	public String toString() {
-		StringBuilder builder = new StringBuilder("\"geometry\": {\n\"type\":\"Point\",\n\"coordinates\": ");
-		builder.append("[" + x + "," + y + "]");
-		builder.append("}\n");
-		return builder.toString();
-	}
+    public int x = 0;
+    public int y = 0;
+
+    public String toString() {
+        StringBuilder builder = new StringBuilder("\"geometry\": {\n\"type\":\"Point\",\n\"coordinates\": ");
+        builder.append("[" + x + "," + y + "]");
+        builder.append("}\n");
+        return builder.toString();
+    }
 }

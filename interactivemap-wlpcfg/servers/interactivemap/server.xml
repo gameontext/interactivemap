@@ -2,7 +2,7 @@
 
     <!-- Enable features -->
     <featureManager>
-		<feature>websocket-1.1</feature>
+    <feature>websocket-1.1</feature>
         <feature>jsonp-1.0</feature>
         <feature>jaxrs-2.0</feature>
         <feature>cdi-1.2</feature>
@@ -11,10 +11,10 @@
     <!-- To access this server from a remote client add a host attribute to the following element, e.g. host="*" -->
     <httpEndpoint host="*" httpPort="9080"  id="defaultHttpEndpoint"/>
 
-	<logging traceSpecification="*=info"/>
+  <logging traceSpecification="*=info"/>
 
-	<!-- This is required to prevent the web apps from being lazily loaded -->
-	<webContainer deferServletLoad="false"/>
+  <!-- This is required to prevent the web apps from being lazily loaded -->
+  <webContainer deferServletLoad="false"/>
 
     <applicationMonitor dropinsEnabled="false"/>
 

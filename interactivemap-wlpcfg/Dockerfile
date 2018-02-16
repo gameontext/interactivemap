@@ -1,13 +1,13 @@
-FROM websphere-liberty:latest
+FROM gameontext/docker-liberty-custom
 
-MAINTAINER Ben Smith
+ENV SERVERDIRNAME player
 
-ADD https://download.elastic.co/logstash-forwarder/binaries/logstash-forwarder_linux_amd64 /opt/forwarder
-ADD ./servers/interactivemap /opt/ibm/wlp/usr/servers/defaultServer/
-
-COPY ./forwarder.conf /opt/forwarder.conf
 COPY ./startup.sh /opt/startup.sh
-
-EXPOSE 9080
+ADD ./servers/interactivemap /opt/ol/wlp/usr/servers/defaultServer/
 
 CMD ["/opt/startup.sh"]
+
+HEALTHCHECK \
+  --timeout=10s \
+  --start-period=40s \
+  CMD wget -q -O /dev/null http://localhost:9080/
